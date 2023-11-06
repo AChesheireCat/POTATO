@@ -10,10 +10,12 @@ class RscFrame;
 class RscButtonMenuCancel;
 class RscButtonMenuOK;
 class RscCombo;
-class RscListbox;
+class RscListBox;
 class RscButton;
 class RscEdit;
 class RscSlider;
+class RscText;
+class RscCheckBox;
 
 class GVAR(bg): IGUIBack {
     idc = BG_IDC;
@@ -75,7 +77,7 @@ class GVAR(build_a_group_dialog) {
             sizeEx = QUOTE(1 * GUI_GRID_H);
             onLBSelChanged  = QUOTE([_this select 1] call FUNC(buildAGroupDialogFactionChange));
         };
-        class GVAR(build_a_group_unit_list): RscListbox {
+        class GVAR(build_a_group_unit_list): RscListBox {
             idc = BUILD_GROUP_UNITS_IDC;
             x = QUOTE(1.5 * GUI_GRID_W + GUI_GRID_X);
             y = QUOTE(3 * GUI_GRID_H + GUI_GRID_Y);
@@ -83,7 +85,7 @@ class GVAR(build_a_group_dialog) {
             h = QUOTE(24.5 * GUI_GRID_H);
             onLBDblClick = QUOTE([_this select 1] call FUNC(buildAGroupDialogAdd));
         };
-        class GVAR(build_a_group_list_to_add): RscListbox {
+        class GVAR(build_a_group_list_to_add): RscListBox {
             idc = BUILD_GROUP_TO_ADD_IDC;
             x = QUOTE(27.5 * GUI_GRID_W + GUI_GRID_X);
             y = QUOTE(3 * GUI_GRID_H + GUI_GRID_Y);
@@ -148,7 +150,7 @@ class GVAR(spawn_a_vic_dialog) {
             tooltip = "Add vehicle";
             action = QUOTE([] call FUNC(spawnAVicDialogSpawn));
         };
-        class GVAR(spawn_a_vic_faction_list): RscListbox {
+        class GVAR(spawn_a_vic_faction_list): RscListBox {
             idc = SPAWN_VIC_FACTIONS_IDC;
             x = QUOTE(1.5 * GUI_GRID_W + GUI_GRID_X);
             y = QUOTE(2 * GUI_GRID_H + GUI_GRID_Y);
@@ -156,7 +158,7 @@ class GVAR(spawn_a_vic_dialog) {
             h = QUOTE(25.5 * GUI_GRID_H);
             onLBSelChanged = QUOTE([_this select 1] call FUNC(spawnAVicDialogFactionChange));
         };
-        class GVAR(spawn_a_vic_list): RscListbox {
+        class GVAR(spawn_a_vic_list): RscListBox {
             idc = SPAWN_VIC_LIST_IDC;
             x = QUOTE(24.5 * GUI_GRID_W + GUI_GRID_X);
             y = QUOTE(2 * GUI_GRID_H + GUI_GRID_Y);
@@ -199,6 +201,22 @@ class GVAR(garrison_dialog) {
             colorBackgroundFocused[] = {0,0.8,0,1};
             tooltip = "Garrison";
             action = QUOTE([] spawn FUNC(garrisonDialogSpawn));
+        };
+        class GVAR(garrison_enable_lambs_checkbox): RscCheckBox {
+            idc = GARRISON_ENABLE_LAMBS_IDC;
+            x = QUOTE(1 * GUI_GRID_W + GUI_GRID_X);
+            y = QUOTE(28 * GUI_GRID_H + GUI_GRID_Y);
+            w = QUOTE(1 * GUI_GRID_W);
+            h = QUOTE(1 * GUI_GRID_H);
+            tooltip = "Enable LAMBS so these enemy can respond to contact";
+        };
+        class GVAR(garrison_enable_lambs_text): RscText {
+            idc = -1;
+            x = QUOTE(2 * GUI_GRID_W + GUI_GRID_X);
+            y = QUOTE(28 * GUI_GRID_H + GUI_GRID_Y);
+            w = QUOTE(13 * GUI_GRID_W);
+            h = QUOTE(1 * GUI_GRID_H);
+            text = "Enable LAMBS for garrisoned units";
         };
         class GVAR(garrison_factions): RscCombo {
             idc = GARRISON_FACTIONS_IDC;

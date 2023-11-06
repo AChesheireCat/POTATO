@@ -34,3 +34,10 @@ The project is entirely open-source and all contributions are welcome. Feel free
 
 No releases are planned, but everyone is welcome to build from source and adapt to their own needs.
 Note that it may require dev versions of [CBA](https://github.com/CBATeam/CBA_A3) and [ACE](https://github.com/acemod/ACE3)
+
+## Building Info
+
+Similar build process as ACE: https://ace3.acemod.org/wiki/development/setting-up-the-development-environment.html#4-setup-and-building
+- Grab Hemtt: https://github.com/BrettMayson/HEMTT/releases/latest
+- Optionally run setup.py to setup filepatching paths
+- Run `hemtt.exe dev` or `hemtt.exe build`

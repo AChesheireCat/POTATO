@@ -2,20 +2,13 @@
 #undef COMPONENT
 #define COMPONENT miscFixes_patchCUP
 
-#if __has_include("\CUP\Vehicles\CUP_Vehicles_LoadOrder\config.bin")
-#else
-#define PATCH_SKIP "CUP Vehicles"
-#endif
-
-#ifdef PATCH_SKIP
-POTATO_PATCH_NOT_LOADED(ADDON,PATCH_SKIP)
-#else
 class CfgPatches {
     class ADDON {
         units[] = {};
         weapons[] = {};
         requiredVersion = REQUIRED_VERSION;
         requiredAddons[] = { "potato_core", "CUP_Weapons_LoadOrder", "CUP_Vehicles_LoadOrder", "CUP_Creatures_People_LoadOrder" };
+        skipWhenMissingDependencies = 1;
         author = "Bourbon Warfare";
         authorUrl = "https://github.com/BourbonWarfare/POTATO";
         VERSION_CONFIG;
@@ -29,20 +22,20 @@ class CfgVehicles {
         class EventHandlers;
     };
     // Fix Leo/Paton tank smoke not working - should be fixed in next cup release
-	class CUP_Leopard2_Base: Tank_F {
-        class EventHandlers: EventHandlers {	
+    class CUP_Leopard2_Base: Tank_F {
+        class EventHandlers: EventHandlers {    
             init="";
             fired="_this call (uinamespace getvariable 'BIS_fnc_effectFired');";
             killed="_this call (uinamespace getvariable 'BIS_fnc_effectKilled');";
-			class CUP_TrackedVehicles_Leopard2 {
-				init = " \
-					[_this select 0] call CUP_fnc_initNumbers; \
-					_this call CUP_fnc_tankAmmoStoreInit; \
-					if (local (_this select 0)) then {[(_this select 0), """", [], false] call bis_fnc_initVehicle;}; \
-				";
-				Fired = "[_this, ""recoil_source"", ""CUP_Vcannon_L55_veh""] call CUP_fnc_cannonAnimate;";
-			};
-		};
+            class CUP_TrackedVehicles_Leopard2 {
+                init = " \
+                    [_this select 0] call CUP_fnc_initNumbers; \
+                    _this call CUP_fnc_tankAmmoStoreInit; \
+                    if (local (_this select 0)) then {[(_this select 0), """", [], false] call bis_fnc_initVehicle;}; \
+                ";
+                Fired = "[_this, ""recoil_source"", ""CUP_Vcannon_L55_veh""] call CUP_fnc_cannonAnimate;";
+            };
+        };
     };
     class CUP_M60A3_Base: Tank_F {
         class EventHandlers: DefaultEventHandlers {
@@ -54,6 +47,55 @@ class CfgVehicles {
                 Fired = "[_this, ""recoil_source"", ""CUP_Vcannon_M68_veh""] call CUP_fnc_cannonAnimate;";
             };
         };
+    };
+    // Fix broken artillery computer on FV432 Mortar (shows artillery computer for 7.62mg)
+    class CUP_B_FV432_Bulldog_GB_D;
+    class CUP_B_FV432_Base: CUP_B_FV432_Bulldog_GB_D {
+        class Turrets;
+    };
+    class CUP_B_FV432_GB_GPMG: CUP_B_FV432_Base {
+        class NewTurret;
+        class Turrets: Turrets {
+            class MainTurret;
+            class Commander;
+        };
+    };
+    class CUP_B_FV432_Mortar: CUP_B_FV432_GB_GPMG {
+        class Turrets: Turrets {
+            class MainTurret: MainTurret {
+                primaryGunner = 0;
+            };
+            class Commander: Commander {
+                primaryGunner = 0;
+            };
+            class MortarTurret: NewTurret {
+                primaryGunner = 1; // this breaks "stow gpmg" user action
+                gunnerOutOpticsModel = "\A3\weapons_f\reticle\Optics_Commander_02_F";
+            };
+        };
+        class UserActions {}; // clear all user actions (not a big deal)
+    };
+};
+
+class CfgRecoils {
+    class recoil_default;
+    class GVAR(recoil_m240): recoil_default {
+        muzzleOuter[] = {0.9,1.3,0.35,0.25};
+        kickBack[] = {0.015,0.02};
+        permanent = 0.05;
+        temporary = 0.005;
+    };
+    class GVAR(recoil_pkm): recoil_default {
+        muzzleOuter[] = {1.1,0.8,0.4,0.2};
+        kickBack[] = {0.015,0.03};
+        permanent = 0.1;
+        temporary = 0.005;
+    };
+    class GVAR(recoil_SAW): recoil_default {
+        muzzleOuter[] = {0.8,1.4,0.35,0.25};
+        kickBack[] = {0.015,0.02};
+        permanent = 0.08;
+        temporary = 0.005;
     };
 };
 
@@ -73,7 +115,7 @@ class CfgWeapons {
     class CUP_V_B_ALICE: CUP_Vest_Camo_Base {
         class ItemInfo;
     };
-    class rhsgref_alice_webbing_bwArmorMod: CUP_V_B_Alice { // must keep old classname, but this is now based on CUP
+    class rhsgref_alice_webbing_bwArmorMod: CUP_V_B_ALICE { // must keep old classname, but this is now based on CUP
         displayName = "ALICE Webbing [coop plot armor]";
         descriptionShort = "Armor Level IV";
         class ItemInfo: ItemInfo {
@@ -100,6 +142,17 @@ class CfgWeapons {
             };
         };
     };
-};
 
-#endif
+    class Rifle_Long_Base_F;
+    class CUP_lmg_M240: Rifle_Long_Base_F { // Applies good cool m240 custom recoil values defined in cfgrecoil
+        recoil = QGVAR(recoil_m240);
+    };
+
+    class CUP_lmg_PKM: Rifle_Long_Base_F { // Applies good cool PKM custom recoil values defined in cfgrecoil
+        recoil = QGVAR(recoil_pkm);
+    };
+    class CUP_saw_base;
+    class CUP_lmg_minimipara: CUP_saw_base { // Applies good cool M249 custom recoil values defined in cfgrecoil
+        recoil = QGVAR(recoil_SAW);
+    };
+};
