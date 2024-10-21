@@ -40,15 +40,15 @@ params ["_display"];
 private _ctrlNoMarkerFrame = _display ctrlCreate ["RscText", -1];
 private _ctrlNoMarkerCheckBox = _display ctrlCreate ["RscCheckBox", ADMIN_NOMARKERS_IDC];
 
-_ctrlNoMarkerFrame ctrlSetPosition [0.62 * safezoneW + safezoneX, 0.22 * safezoneH + safezoneY, 0.11 * safezoneW, 0.05 * safezoneH];
+_ctrlNoMarkerFrame ctrlSetPosition [0.62 * safeZoneW + safeZoneX, 0.22 * safeZoneH + safeZoneY, 0.11 * safeZoneW, 0.05 * safeZoneH];
 _ctrlNoMarkerFrame ctrlCommit 0;
 _ctrlNoMarkerFrame ctrlSetText "No Markers";
 
-_ctrlNoMarkerCheckBox ctrlSetPosition [0.69 * safezoneW + safezoneX, 0.23 * safezoneH + safezoneY, 0.02 * safezoneW, 4/3 * 0.02 * safezoneW];
+_ctrlNoMarkerCheckBox ctrlSetPosition [0.69 * safeZoneW + safeZoneX, 0.23 * safeZoneH + safeZoneY, 0.02 * safeZoneW, 4/3 * 0.02 * safeZoneW];
 _ctrlNoMarkerCheckBox ctrlCommit 0;
 _ctrlNoMarkerCheckBox ctrlSetTooltip "Secret Respawn";
 _ctrlNoMarkerCheckBox cbSetChecked (missionNamespace getVariable [QGVAR(noMarkers), false]);
-_ctrlNoMarkerCheckBox ctrlAddEventHandler ["checkedChanged", {
+_ctrlNoMarkerCheckBox ctrlAddEventHandler ["CheckedChanged", {
     params ["", "_checked"];
     _checked = [false, true] select _checked;
     missionNamespace setVariable [QGVAR(noMarkers), _checked, true];
@@ -82,32 +82,32 @@ private _allFactions = createHashMap;
     if (_count > 0) then { _displayName = _displayName + format [" [%1]", _count]; };
 
     private _index = lbAdd [ADMIN_FACTION_COMBO_IDC, _displayName];
-    if (isText (configfile >> "CfgFactionClasses" >> _factionClassname >> "icon")) then {
-        lbSetPicture [ADMIN_FACTION_COMBO_IDC, _index, getText (configfile >> "CfgFactionClasses" >> _factionClassname >> "icon")];
+    if (isText (configFile >> "CfgFactionClasses" >> _factionClassname >> "icon")) then {
+        lbSetPicture [ADMIN_FACTION_COMBO_IDC, _index, getText (configFile >> "CfgFactionClasses" >> _factionClassname >> "icon")];
     };
     lbSetData [ADMIN_FACTION_COMBO_IDC, _index, _x];
 } forEach (allVariables GVAR(factionsToInfo));
 
-private _factionIndex = if !(isNil QGVAR(lastFactionIndex)) then {
-    GVAR(lastFactionIndex)
-} else {
+private _factionIndex = if (isNil QGVAR(lastFactionIndex)) then {
     0
+} else {
+    GVAR(lastFactionIndex)
 };
 lbSetCurSel [ADMIN_FACTION_COMBO_IDC, _factionIndex];
 [ADMIN_FACTION_COMBO, _factionIndex] call FUNC(ui_handleFactionChange);
 
-private _groupIndex = if !(isNil QGVAR(lastGroupIndex)) then {
-    GVAR(lastGroupIndex)
-} else {
+private _groupIndex = if (isNil QGVAR(lastGroupIndex)) then {
     0
+} else {
+    GVAR(lastGroupIndex)
 };
 lbSetCurSel [ADMIN_GROUP_COMBO_IDC, _groupIndex];
 [ADMIN_GROUP_COMBO, _groupIndex] call FUNC(ui_handleGroupChange);
 
-private _configIndex = if !(isNil QGVAR(lastConfigIndex)) then {
-    GVAR(lastConfigIndex)
-} else {
+private _configIndex = if (isNil QGVAR(lastConfigIndex)) then {
     0
+} else {
+    GVAR(lastConfigIndex)
 };
 lbSetCurSel [ADMIN_CONFIG_COMBO_IDC, _configIndex];
 

@@ -10,20 +10,20 @@ ace_nametags_useFactionIcons = false;
 if (isServer) then {
     private _skip = [];
     private _settings = [];
-    #include "BW_Settings.sqf"
+    #include "BW_Settings.inc.sqf"
 
-    INFO_1("Setting server values for [%1] settings", count _settings);
-    if ((count _skip) > 1) then { WARNING_1("skipping %1",_skip) };
+    INFO_1("Setting server values for [%1] settings",count _settings);
+    if ((count _skip) > 0) then { WARNING_1("skipping %1",_skip) };
     {
         _x params ["_settingName", "_settingValue", ["_force", false]];
-        if (isNil _settingName) then { WARNING_1("Setting not init: %1",_settingName); };
+        if (isNil _settingName) then { INFO_1("Setting not init yet: %1",_settingName); }; // can just be a mod load order, not an error
         private _ret = [_settingName, _settingValue, [0, 2] select _force, "server"] call CBA_settings_fnc_set;
-        TRACE_4("Setting",_settingName,_settingValue, _force, _ret);
+        TRACE_4("Setting",_settingName,_settingValue,_force,_ret);
     } forEach _settings;
 
     [{
         params ["_settings"];
-        INFO_1("Checking [%1] settings", count _settings);
+        INFO_1("Checking [%1] settings",count _settings);
 
         // Settings Test:
         {
@@ -36,8 +36,18 @@ if (isServer) then {
             };
         } forEach _settings;
 
+        // Warn if old mission had set AAA set via mission settings
+        private _missionSettingsHash = getMissionConfigValue "cba_settings_hash";
+        if ([_missionSettingsHash] call CBA_fnc_isHash) then {
+            private _aaa = [_missionSettingsHash, "aaa_var_mod_enabled"] call CBA_fnc_hashGet;
+            if (!isNil "_aaa") then {
+                private _log = format ["Warning AAA was set to %1", _aaa];
+                ["potato_adminMsg", [_log, "Mission"]] call CBA_fnc_globalEvent;
+            };
+        };
+
         // report specific medical settings
-        private _log = format ["[AAA=%1] [aDmgPass=%2]", AAA_VAR_MOD_ENABLED, ace_medical_engine_damagePassThroughEffect toFixed 2];
+        private _log = format ["[AMA=%1] [aDmgPass=%2]", potato_armor_modifier_ace, ace_medical_engine_damagePassThroughEffect toFixed 2];
         ["potato_adminMsg", [_log, "Mission"]] call CBA_fnc_globalEvent;
     }, [_settings], 4] call CBA_fnc_waitAndExecute;
 

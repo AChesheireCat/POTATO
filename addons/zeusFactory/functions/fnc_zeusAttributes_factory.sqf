@@ -11,23 +11,23 @@ if (isNil QGVAR(carArray)) then { // init vehicle arrays if they don't exist
 
     GVAR(helicopterArray) = [];
     [GVAR(helicopterArray), "helicopters"] call FUNC(addVehiclesToArray);
-    TRACE_3("", count GVAR(carArray), count GVAR(apcArray), count GVAR(helicopterArray));
+    TRACE_3("",count GVAR(carArray),count GVAR(apcArray),count GVAR(helicopterArray));
 };
 
 if (isNil QGVAR(lastSide)) then {GVAR(lastSide) = east};
-if (isNil QGVAR(lastCar)) then {GVAR(lastCar) = (CARS_ARRAY select 0)};
-if (isNil QGVAR(lastAPC)) then {GVAR(lastAPC) = (APC_ARRAY select 0)};
-if (isNil QGVAR(lastHeli)) then {GVAR(lastHeli) = (HELI_ARRAY select 0)};
+if (isNil QGVAR(lastCar)) then {GVAR(lastCar) = GVAR(carArray) select 0};
+if (isNil QGVAR(lastAPC)) then {GVAR(lastAPC) = GVAR(apcArray) select 0};
+if (isNil QGVAR(lastHeli)) then {GVAR(lastHeli) = GVAR(helicopterArray) select 0};
 
 disableSerialization;
 
 params ["_control"];
-private _logicObject = missionNamespace getVariable ["BIS_fnc_initCuratorAttributes_target", objnull];
+private _logicObject = missionNamespace getVariable ["BIS_fnc_initCuratorAttributes_target", objNull];
 TRACE_2("zeusAttributes_factory",_control,_logicObject);
 
-private _display = ctrlparent _control;
-private _ctrlButtonOK = _display displayctrl 1; //IDC_OK
-_control ctrlRemoveAllEventHandlers "setFocus";
+private _display = ctrlParent _control;
+private _ctrlButtonOK = _display displayCtrl 1; //IDC_OK
+_control ctrlRemoveAllEventHandlers "SetFocus";
 
 
 // Init: Side List (If already set, do not allow changing)
@@ -66,7 +66,7 @@ private _fnc_onUnload = {
     params [["_display", displayNull, [displayNull]], ["_exitCode", -1]];
     TRACE_1("_fnc_onUnload params",_display);
 
-    private _logicObject = missionnamespace getVariable ["BIS_fnc_initCuratorAttributes_target", objnull];
+    private _logicObject = missionNamespace getVariable ["BIS_fnc_initCuratorAttributes_target", objNull];
     if (isNull _logicObject) exitWith {TRACE_1("null",_logicObject);};
 
     private _set = _logicObject getVariable [QGVAR(set), false];
@@ -80,11 +80,11 @@ private _fnc_onUnload = {
 private _fnc_onConfirm = {
     params [["_ctrlButtonOK", controlNull, [controlNull]]];
     TRACE_1("_fnc_onConfirm params",_this);
-    private _display = ctrlparent _ctrlButtonOK;
+    private _display = ctrlParent _ctrlButtonOK;
     if (isNull _display) exitWith {};
 
-    private _logicObject = missionnamespace getvariable ["BIS_fnc_initCuratorAttributes_target", objnull];
-    if (isNull _logicObject) exitWith {ERROR_1("Logic [%1] is null on confirm", _logicObject);};
+    private _logicObject = missionNamespace getVariable ["BIS_fnc_initCuratorAttributes_target", objNull];
+    if (isNull _logicObject) exitWith {ERROR_1("Logic [%1] is null on confirm",_logicObject);};
 
     private _set = _logicObject getVariable [QGVAR(set), false];
 
@@ -110,5 +110,5 @@ private _fnc_onConfirm = {
     TRACE_3("setting vehicles",_carType,_apcType,_heliType);
 };
 
-_display displayaddeventhandler ["unload", _fnc_onUnload];
-_ctrlButtonOK ctrladdeventhandler ["buttonclick", _fnc_onConfirm];
+_display displayAddEventHandler ["Unload", _fnc_onUnload];
+_ctrlButtonOK ctrlAddEventHandler ["ButtonClick", _fnc_onConfirm];

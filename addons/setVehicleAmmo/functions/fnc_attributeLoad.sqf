@@ -1,7 +1,7 @@
 #include "script_component.hpp"
 
 params ["_control", "_loadoutValue"];
-TRACE_2("params",_control ,_loadoutValue);
+TRACE_2("params",_control,_loadoutValue);
 
 GVAR(turretMagsArray) = [];
 GVAR(defaultLoad) = [];
@@ -42,7 +42,7 @@ private _enableLBChangedEH = {
         ((ctrlParentControlsGroup _control) controlsGroupCtrl 102) ctrlCommit 0;
     };
 };
-(_control controlsGroupCtrl 100) ctrlAddEventHandler ["ToolboxSelChanged", _enableLBChangedEH];
+(_control controlsGroupCtrl 100) ctrlAddEventHandler ["ToolBoxSelChanged", _enableLBChangedEH];
 
 if (GVAR(deltaLoad) isEqualTo []) then {
     (_control controlsGroupCtrl 100) lbSetCurSel 0;
@@ -79,13 +79,13 @@ private _treeSelChangedEH = {
         private _magCount = 0;
         {
             _x params ["_xPath", "_xMag", "_xCount"];
-            if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitwith {
+            if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitWith {
                 _magCount = _xCount;
             };
         } forEach GVAR(defaultLoad);
         {
             _x params ["_xPath", "_xMag", "_xCount"];
-            if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitwith {
+            if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitWith {
                 _magCount = _magCount + _xCount;
             };
         } forEach GVAR(deltaLoad);
@@ -113,7 +113,7 @@ private _sliderChangedEH = {
     private _defaultCount = 0;
     {
         _x params ["_xPath", "_xMag", "_xCount"];
-        if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitwith {
+        if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitWith {
             _defaultCount = _xCount;
         };
     } forEach GVAR(defaultLoad);
@@ -122,7 +122,7 @@ private _sliderChangedEH = {
     private _found = false;
     {
         _x params ["_xPath", "_xMag", "_xCount"];
-        if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitwith {
+        if ((_xPath isEqualTo GVAR(selectedTurretPath)) && {_xMag == GVAR(selectedMagazine)}) exitWith {
             _found = true;
             _x set [2, _delta];
         };
@@ -153,11 +153,11 @@ private _addWeaponSystem = {
     if (_weapons isEqualTo []) exitWith {};
 
     {
-        _magToAdd = _x;
-        _found = false;
+        private _magToAdd = _x;
+        private _found = false;
         {
             _x params ["_xPath", "_xMag", "_xCount"];
-            if ((_xPath isEqualTo _path) && {_xMag == _magToAdd}) exitwith {
+            if ((_xPath isEqualTo _path) && {_xMag == _magToAdd}) exitWith {
                 _found = true;
                 _x set [2, (_xCount + 1)];
             };
@@ -189,17 +189,17 @@ private _addWeaponSystem = {
         private _tvIndexWeapon = (_control controlsGroupCtrl 101) tvAdd [[_tvIndexTurret], _x];
         (_control controlsGroupCtrl 101) tvExpand [_tvIndexTurret, _tvIndexWeapon];
         {
-            _magToAdd = _x;
+            private _magToAdd = _x;
             private _magCount = 0;
             {
                 _x params ["_xPath", "_xMag", "_xCount"];
-                if ((_xPath isEqualTo _path) && {_xMag == _magToAdd}) exitwith {
+                if ((_xPath isEqualTo _path) && {_xMag == _magToAdd}) exitWith {
                     _magCount = _xCount;
                 };
             } forEach GVAR(defaultLoad);
             {
                 _x params ["_xPath", "_xMag", "_xCount"];
-                if ((_xPath isEqualTo _path) && {_xMag == _magToAdd}) exitwith {
+                if ((_xPath isEqualTo _path) && {_xMag == _magToAdd}) exitWith {
                     _magCount = _magCount + _xCount;
                 };
             } forEach GVAR(deltaLoad);
@@ -214,7 +214,7 @@ private _addWeaponSystem = {
 [_config, [-1], "Pilot"] call _addWeaponSystem;
 
 {
-    _turretConfig = [_config, _x] call ace_common_fnc_getTurretConfigPath;
+    private _turretConfig = [_config, _x] call ace_common_fnc_getTurretConfigPath;
     TRACE_2("",_x,_turretConfig);
     [_turretConfig, _x, (format ["Turret %1", _x])] call _addWeaponSystem;
 } forEach _turrets;

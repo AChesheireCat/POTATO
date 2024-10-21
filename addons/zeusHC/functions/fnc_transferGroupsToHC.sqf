@@ -24,7 +24,7 @@ waitUntil { time > 0 };
 if (!isMultiplayer) exitWith {
     diag_log text format ["[POTATO] Not in multiplayer, exiting %1",QFUNC(transferGroupsToHC)];
     diag_log text format ["[POTATO] Broadcasting aiTransfered var (SKIPPED)"];
-    missionNameSpace setVariable [QGVAR(aiTransfered), true, true];
+    missionNamespace setVariable [QGVAR(aiTransfered), true, true];
 };
 if (!isServer) exitWith { ERROR("transferGroupsToHC should only be called on server"); };
 
@@ -32,13 +32,13 @@ private _allHCs = entities "HeadlessClient_F";
 if (_allHCs isEqualTo []) exitWith {
     diag_log text format ["[POTATO] No headless clients found, exiting %1", QFUNC(transferGroupsToHC)];
     diag_log text format ["[POTATO] Broadcasting aiTransfered var (SKIPPED)"];
-    missionNameSpace setVariable [QGVAR(aiTransfered), true, true];
+    missionNamespace setVariable [QGVAR(aiTransfered), true, true];
 };
 
 private _hcIDs = _allHCs apply { owner _x };
 
 private _timeBetweenTransfers = if (isNil QGVAR(timeBetweenTransfers)) then { 0.5 } else { GVAR(timeBetweenTransfers) };
-TRACE_1("Time between transfers", _timeBetweenTransfers);
+TRACE_1("Time between transfers",_timeBetweenTransfers);
 
 //loop all groups
 {
@@ -53,5 +53,5 @@ TRACE_1("Time between transfers", _timeBetweenTransfers);
 
 
 diag_log text format ["[POTATO] Broadcasting aiTransfered var (Transfer Done)"];
-missionNameSpace setVariable [QGVAR(aiTransfered), true, true];
+missionNamespace setVariable [QGVAR(aiTransfered), true, true];
 

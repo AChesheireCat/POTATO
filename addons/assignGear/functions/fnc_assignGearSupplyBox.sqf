@@ -1,7 +1,9 @@
 #include "script_component.hpp"
 /*
- * Author: PabstMirror
+ * Author: Bailey
  * Fills supply box with gear for a faction
+ * Edit by Lambda.tiger
+ * Supports boxes containing other boxes
  *
  * Arguments:
  * 0: Box <OBJECT>
@@ -15,64 +17,69 @@
  * Public: No
  */
 
-params ["_box"];
+params ["_theBox"];
 
-private _config = configOf _box;
-private _faction = getText (_config >> QGVAR(faction));
-private _path = missionConfigFile >> "CfgLoadouts" >> _faction;
-private _type = getText (_config >> QGVAR(type)); // 1=squad, 2=platoon
-TRACE_3("suppy_initBox",_box,_faction,_type);
+TRACE_1("",GVAR(setSupplyBoxLoadouts));
 
-private _size = 1; // scaling factor for medical and ammo
-private _classes = ["rifleman", "ar", "ar", "lat", "ftl"];
-private _checkDisposable = ["lat"];
+if (_theBox getVariable [QGVAR(initialized), false]) exitWith {};
+_theBox setVariable [QGVAR(initialized), true, true];
 
-if (_type == "platoon") then {
-    _size = 2;
-    _classes append ["mmgg", "matg", "msamg"];
-    _checkDisposable pushBack "matg";
+//Leave default gear when GVAR(setSupplyBoxLoadouts) is 0
+if (GVAR(setSupplyBoxLoadouts) == 0) exitWith {};
+
+//Clean out starting inventory when GVAR(setSupplyBoxLoadouts) is -1
+if (GVAR(setSupplyBoxLoadouts) == -1) exitWith {
+    clearWeaponCargoGlobal _theBox;
+    clearMagazineCargoGlobal _theBox;
+    clearItemCargoGlobal _theBox;
+    clearBackpackCargoGlobal _theBox;
 };
 
-private _boxWeapons = createHashMap;
-private _boxMags = createHashMap;
-private _boxItems = createHashMapFromArray [
-    ["ACE_elasticBandage", _size * 20],
-    ["ACE_packingBandage", _size * 20],
-    ["ACE_epinephrine", _size * 10],
-    ["ACE_morphine", _size * 10],
-    ["ACE_splint", _size * 10],
-    ["ACE_salineIV_500", _size * 10]
-];
+private _path = missionConfigFile >> "CfgLoadouts" >> "SupplyBoxes" >> typeOf _theBox;
 
-{
-    private _loadout = _path >> _x;
-    if (_x in _checkDisposable) then {
-        private _launcher = (getArray (_loadout >> "launchers")) param [0, "#"];
-        private _launcherConfig = configFile >> "CfgWeapons" >> _launcher;
-        if (isNull _launcherConfig) then { continue };
-        if (((getNumber (_launcherConfig >> "rhs_disposable")) == 1) || {!isNil {cba_disposable_normalLaunchers getVariable _launcher}}) then {
-            private _count = _boxWeapons getOrDefault [_launcher, 0];
-            _boxWeapons set [_launcher, _count + _size * 2]
-        };
+if (!isClass _path) exitWith {
+    diag_log formatText ["[POTATO-assignGear] - No loadout found for %1 (typeOf %2)", _theBox, typeOf _theBox];
+};
+
+private _subBoxes = "true" configClasses _path;
+if (_subBoxes isNotEqualTo [] && GVAR(setSupplyBoxLoadouts) == 2) then {
+    private _boxName = getText (_path >> "boxCustomName");
+    if (_boxName isNotEqualTo "") then {
+        _theBox setVariable [QACEGVAR(cargo,customName), _boxName, true];
     };
-
+    clearWeaponCargoGlobal _theBox;
+    clearMagazineCargoGlobal _theBox;
+    clearItemCargoGlobal _theBox;
+    clearBackpackCargoGlobal _theBox;
+    private _boxSpace = getNumber (_path >> "boxSpace");
+    [_theBox, [_boxSpace, 4] select (_boxSpace == 0)] call ACEFUNC(cargo,setSpace);
     {
-        (_x splitString ":") params ["_xClass", ["_xCount", "1", [""]]];
-        private _count = _boxMags getOrDefault [_xClass, 0];
-        _boxMags set [_xClass, _count + _size * parseNumber _xCount];
-    } forEach getArray (_loadout >> "magazines");
-} forEach _classes;
+        private _subBoxType = configName _x;
+        private _boxCount = (getNumber (_x >> "boxCount")) max 1;
+        for "_i" from 1 to _boxCount do {
+            private _subBox = createVehicle [_subBoxType, [0, 0, 0], [], 0, "CAN_COLLIDE"];
+            [_subBox, _x, ["%1", "%1 " + str _i] select (_boxCount > 1)] call FUNC(setBoxContentsFromConfig);
+            [_subBox, 1] call ACEFUNC(cargo,setSize);
+            if !([_subBox, _theBox, true] call ACEFUNC(cargo,loadItem)) exitWith {
+                diag_log formatText [
+                    "[POTATO-assignGear] - Failed to create %1 %2 supply box(es) for %3 - out of space ",
+                    _subBoxType,
+                    "x" + str (_boxCount - _i + 1),
+                    typeOf _theBox
+                ];
+                deleteVehicle _subBox;
+            };
+            _subBox setVariable [QGVAR(initialized), true];
+        };
+    } forEach _subBoxes;
+    [_theBox, 2] call ACEFUNC(cargo,setSize);
+    [_theBox, true, [0, 1, 1], 0, true, true] call ACEFUNC(dragging,setCarryable);
+    [_theBox, true, [0, 1.5, 0], 0, true, true] call ACEFUNC(dragging,setDraggable);
+} else {
+    [_theBox, _path] call FUNC(setBoxContentsFromConfig);
+};
 
-
-{
-    TRACE_2("weapons",_x,_y);
-    _box addWeaponCargoGlobal [_x, _y];
-} forEach _boxWeapons;
-{
-    TRACE_2("mags",_x,_y);
-    _box addMagazineCargoGlobal [_x, _y];
-} forEach _boxMags;
-{
-    TRACE_2("items",_x,_y);
-    _box addItemCargoGlobal [_x, _y];
-} forEach _boxItems;
+private _addMarkingActions = getNumber (_path >> "addMarkingActions");
+if (_addMarkingActions >= 1) then {
+    [QGVAR(resupplyBoxAddActions), [_theBox, _addMarkingActions]] call CBA_fnc_globalEventJIP;
+};

@@ -53,7 +53,7 @@ if !(GVAR(mapOpen) || GVAR(fullMapOpen)) then {
             if (_type == 2 && { _unit distance GVAR(cam) < DISTANCE_NAMES } && {_unit in GVAR(camTarget) || _unit in GVAR(cursorObject)}) then {
                 drawIcon3D [
                     ICON_BACKGROUND_UNIT,
-                    [0, 0, 0, if (_unit in GVAR(camTarget)) then { 0.8 } else { 0.4 }],
+                    [0, 0, 0, [0.4, 0.8] select (_unit in GVAR(camTarget))],
                     _position,
                     5.0,
                     4,
@@ -131,8 +131,6 @@ if !(GVAR(mapOpen) || GVAR(fullMapOpen)) then {
             TRACE_1("grenade",_x);
             _x params ["_projectile", "_icon", "_color"];
             if !(isNull _projectile) then {
-                private _grenadeVelocityMagnitude = vectorMagnitude velocity _projectile;
-
                 // Draw grenade
                 drawIcon3D [_icon, _color, (getPosVisual _projectile) vectorAdd [0,0,0.25], 0.4, 0.4, 0, "", 0, 0.05, "TahomaB"];
 

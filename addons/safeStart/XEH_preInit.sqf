@@ -6,10 +6,12 @@ PREP_RECOMPILE_START;
 #include "XEH_PREP.hpp"
 PREP_RECOMPILE_END;
 
-#include "initSettings.sqf"
+#include "initSettings.inc.sqf"
 
 // We Start game safe at preInit
 GVAR(safeStartEnabled) = true;
+GVAR(safeStartForceEnd) = getMissionConfigValue [QEGVAR(missionTesting,SSForceEnd), false];
+GVAR(safeStartSafetyOn) = false;
 
 // Register events
 ["potato_safeStartOn", {
