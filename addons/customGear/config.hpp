@@ -2,18 +2,15 @@
 
 class CfgPatches {
     class ADDON {
-        weapons[] = {
-            QGVAR(MG5)
-        };
         units[] = {};
+        weapons[] = { "potato_fauxMG5_MG5" };
         requiredVersion = REQUIRED_VERSION;
-        requiredAddons[] = {"potato_core", "CUP_Weapons_LoadOrder"};
-        skipWhenMissingDependencies = 1;
+        requiredAddons[] = { "potato_core" };
         author = "Potato";
-        authors[] = {"AChesheireCat"};
         authorUrl = "https://github.com/BourbonWarfare/POTATO";
         VERSION_CONFIG;
     };
 };
 
 #include "CfgWeapons.hpp"
+#include "CfgVehicles.hpp"
