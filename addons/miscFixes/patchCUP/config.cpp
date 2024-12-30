@@ -160,6 +160,11 @@ class CfgWeapons {
     class CUP_lmg_minimipara: CUP_saw_base { // Applies good cool M249 custom recoil values defined in cfgrecoil
         recoil = QGVAR(recoil_SAW);
     };
+    class CUP_lmg_minimi_railed: CUP_lmg_minimipara {};
+    class CUP_lmg_m249_pip4: CUP_lmg_minimi_railed {
+        hasBipod = 1;
+    };
+    
     class CUP_smg_MP7: Rifle_Short_Base_F { // Applies the APEX dlc MP5 recoil to the CUP MP7
         recoil = "recoil_smg_05";
     };

@@ -101,8 +101,10 @@ class CfgWeapons {
         descriptionShort = "Light Machine Gun<br />Caliber: 5.56x45 mm";
         baseWeapon = "potato_lmg_LAMG";
         recoil = "CUP_SAW_recoil";
-        magazineWell[] = {"CBA_556x45_MINIMI"};
+        magazineWell[] = {"CBA_556x45_MINIMI","M249_556x49"};
         magazines[] = {"CUP_100Rnd_TE4_Red_Tracer_556x45_M249"};
+        reloadAction = "GestureReloadM200";
+        reloadMagazineSound[] = {"\jsrs_soundmod_complete\JSRS_Soundmod_Soundfiles\weapons\reload\m200_reload.ogg",2,1,35};
     };
     class potato_lmg_LAMG_black: potato_lmg_LAMG {
         author = "Potato";
