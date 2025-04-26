@@ -7,7 +7,7 @@ class CfgPatches {
         weapons[] = {};
         units[] = {"O_ZBL09", "O_ZTL11", "O_ZBD04A", "O_ZBD05","O_ZTD05", "O_ZTQ15","O_ZTQ15B","O_ZTZ96A","O_ZTZ96B","O_ZTZ99","O_ZTZ99A"};
         requiredVersion = REQUIRED_VERSION;
-        requiredAddons[] = {"ZBL09_LK", "ZTL11_LK", "ZBD04_LK", "ZBD05_LK", "ZTD05_LK", "ZTQ15_LK", "ZTZ96_c_LK", "ZTZ96A_LK", "ZTZ96B_LK", "ZTZ99_LK", "ZTZ99A_LK"};
+        requiredAddons[] = {"ZBL09_LK", "ZTL11_LK", "ZBD04_LK", "ZBD05_LK", "ZTD05_LK", "ZTQ15_LK", "ZTZ96_c_LK", "ZTZ96A_LK", "ZTZ96B_LK", "ZTZ99_LK", "ZTZ99A_LK", "Z10"};
         skipWhenMissingDependencies = 1;
         author = "Potato";
         authors[] = {"Chesheire","watermelon"};
@@ -947,6 +947,19 @@ class CfgVehicles {
             };
             class HitHull {
                 minimalHit = 0.1; // was 0.2
+            };
+        };
+    };
+    
+    class Air;
+    class Helicopter: Air {};
+    class Helicopter_Base_F: Helicopter {};
+    class Z10_base: Helicopter_Base_F {
+        class TextureSources {
+            class AUS {
+                displayName = "Australian Army";
+				author = "Chesheire";
+				textures[] = {"Z10\tex\H_co.paa","Z10\tex\A_co.paa","Z10\tex\O_co.paa","Z10\tex\R_co.paa"};
             };
         };
     };
