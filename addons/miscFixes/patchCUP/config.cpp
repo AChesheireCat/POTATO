@@ -274,6 +274,7 @@ class CfgMagazineWells {
     };
 };
 
+class Mode_FullAuto;
 class CfgWeapons {
     // Make A-10A compatible with CCIP
     class CannonCore;
@@ -336,6 +337,12 @@ class CfgWeapons {
     class CUP_saw_base;
     class CUP_lmg_minimipara: CUP_saw_base { // Applies good cool M249 custom recoil values defined in cfgrecoil
         recoil = QGVAR(recoil_SAW);
+    };
+    class CUP_lmg_minimi_railed: CUP_lmg_minimipara {};
+    class CUP_lmg_m249_pip3: CUP_lmg_minimi_railed {
+        class FullAuto: Mode_FullAuto {
+            dispersion = 0.0029;
+        };
     };
     class CUP_smg_MP7: Rifle_Short_Base_F { // Applies the APEX dlc MP5 recoil to the CUP MP7
         recoil = "recoil_smg_05";
